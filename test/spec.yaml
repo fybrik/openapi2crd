@@ -1,0 +1,20 @@
+components:
+  schemas:
+    ExternalSecret:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Messages'
+    Messages:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Message'
+    Message:
+      type: object
+      properties:
+        code:
+          type: integer
+        text:
+          type: string
