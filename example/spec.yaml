@@ -1,6 +1,6 @@
 components:
   schemas:
-    ExternalSecret:
+    Example:
       type: object
       properties:
         messages:

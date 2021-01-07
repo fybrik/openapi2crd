@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
-	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -16,7 +14,6 @@ import (
 )
 
 const (
-	specOption      = "spec"
 	outputOption    = "output"
 	resourcesOption = "input"
 )
@@ -24,17 +21,18 @@ const (
 // RootCmd defines the root cli command
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "openapi2crd",
-		Short:         "Outputs a CustomResourceDefinition using the `components.schemas` field of an OpenAPI 3.0 document",
+		Use:           "openapi2crd FILE",
+		Short:         "Generate CustomResourceDefinition from OpenAPI 3.0 document",
 		SilenceErrors: true,
 		SilenceUsage:  true,
 		PreRun: func(cmd *cobra.Command, args []string) {
 			_ = viper.BindPFlags(cmd.Flags())
 		},
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			specOptionValue := viper.GetString(specOption)
-			loader := &openapi3.SwaggerLoader{IsExternalRefsAllowed: false}
-			swagger, err := loader.LoadSwaggerFromFile(filepath.Clean(specOptionValue))
+			specOptionValue := args[0]
+
+			swagger, err := config.LoadSwagger(specOptionValue)
 			if err != nil {
 				return err
 			}
@@ -64,8 +62,6 @@ func RootCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP(specOption, "s", "", "Path to OpenAPI 3.0 specification file (required)")
-	_ = cmd.MarkFlagRequired(specOption)
 	cmd.Flags().StringP(outputOption, "o", "", "Path to output file (required)")
 	_ = cmd.MarkFlagRequired(outputOption)
 	cmd.Flags().StringP(resourcesOption, "i", "", "Path to directory with CustomResourceDefinition YAML files (required)")

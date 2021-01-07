@@ -1,6 +1,6 @@
 # openapi2crd
 
-`openapi2crd` is a CLI to generate Kubernetes Custom Resource Definition (CRD) from [OpenAPI 3.0](https://www.openapis.org/).
+`openapi2crd` is a CLI to generate Kubernetes Custom Resource Definition (CRD) resources from [OpenAPI 3.0](https://www.openapis.org/).
 
 ## Install
 
@@ -12,22 +12,20 @@ This will put openapi2crd in `$(go env GOPATH)/bin`. You may need to add that di
 
 ## Usage
 
-```
-Outputs a CustomResourceDefinition using the `components.schemas` field of an OpenAPI 3.0 document
+1. Create an input directory with YAML files of `CustomResourceDefinition` resources without schema information (see [example/input](example/input)).
+1. Create an OpenAPI 3.0 document with `components.schemas` (see [example/spec.yaml](example/spec.yaml))
+    * The document must include a schema with the name identical to the `kind` of each input `CustomResourceDefinition`. 
+    * The document must comply with the listed [limitations](#limitations)
+1. Invoke `openapi2crd` command:
+    ```bash
+    openapi2crd SPEC_FILE --input INPUT_DIR --output OUTPUT_FILE
+    ```
 
-Usage:
-  openapi2crd [flags]
-
-Flags:
-  -h, --help            help for openapi2crd
-  -i, --input string    Path to directory with CustomResourceDefinition YAML files (required)
-  -o, --output string   Path to output file (required)
-  -s, --spec string     Path to OpenAPI 3.0 specification file (required)
-```
+An output YAML file will be generated in the specified output location (see [example/output/output.yaml](example/output/output.yaml))
 
 ## Limitations
 
-- Only [structural schemas](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema) are allowed with the exception that you can use `$ref` to reference objects defined in the same spec file.
+- Only [structural schemas](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#specifying-a-structural-schema) are allowed with the exception that you can use `$ref`.
 
 ## Acknowledgements
 
