@@ -8,9 +8,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/roee88/openapi2crd/pkg/config"
-	"github.com/roee88/openapi2crd/pkg/exporter"
-	"github.com/roee88/openapi2crd/pkg/generator"
+	"github.com/mesh-for-data/openapi2crd/pkg/config"
+	"github.com/mesh-for-data/openapi2crd/pkg/exporter"
+	"github.com/mesh-for-data/openapi2crd/pkg/generator"
 )
 
 const (

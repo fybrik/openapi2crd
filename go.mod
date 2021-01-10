@@ -1,4 +1,4 @@
-module github.com/roee88/openapi2crd
+module github.com/mesh-for-data/openapi2crd
 
 go 1.13
 

@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-go get github.com/roee88/openapi2crd
+go get github.com/mesh-for-data/openapi2crd
 ```
 
 This will put openapi2crd in `$(go env GOPATH)/bin`. You may need to add that directory to your `$PATH` if you encounter a "command not found" error.

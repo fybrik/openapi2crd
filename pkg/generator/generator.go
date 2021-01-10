@@ -4,7 +4,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 
-	"github.com/roee88/openapi2crd/pkg/convert"
+	"github.com/mesh-for-data/openapi2crd/pkg/convert"
 )
 
 type Generator struct {
