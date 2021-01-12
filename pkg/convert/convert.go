@@ -4,8 +4,6 @@
 package convert
 
 import (
-	"strings"
-
 	"github.com/getkin/kin-openapi/openapi3"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 )
@@ -16,12 +14,6 @@ func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef, spec openapi3.Schemas
 
 	if schemaRef == nil {
 		return props
-	}
-
-	if schemaRef.Ref != "" {
-		ref := strings.TrimPrefix(schemaRef.Ref, "#/components/schemas/")
-		propref := spec[ref]
-		return SchemaPropsToJSONProps(propref, spec)
 	}
 
 	schemaProps := schemaRef.Value
