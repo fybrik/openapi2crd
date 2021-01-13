@@ -4,7 +4,10 @@
 package convert
 
 import (
+	"strings"
+
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/stoewer/go-strcase"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 )
 
@@ -50,6 +53,36 @@ func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef, spec openapi3.Schemas
 		AdditionalProperties: schemaToJSONSchemaPropsOrBool(schemaProps.AdditionalProperties, spec),
 		// PatternProperties:    schemasToJSONSchemaPropsMap(schemaProps.PatternProperties, spec),
 		// AdditionalItems: schemaToJSONSchemaPropsOrBool(schemaProps.AdditionalItems, spec),
+	}
+
+	// Apply custom transformations
+	props = transformations(props, schemaRef, spec)
+
+	return props
+}
+
+func transformations(props *apiextensions.JSONSchemaProps, schemaRef *openapi3.SchemaRef, spec openapi3.Schemas) *apiextensions.JSONSchemaProps {
+	return oneOfRefsTransform(props, schemaRef.Value.OneOf, spec)
+}
+
+// oneOfRefsTransform transforms oneOf with a list of $ref to a list of nullable properties
+func oneOfRefsTransform(props *apiextensions.JSONSchemaProps, oneOf openapi3.SchemaRefs, spec openapi3.Schemas) *apiextensions.JSONSchemaProps {
+	if props.OneOf != nil && len(props.Properties) == 0 && props.AdditionalProperties == nil {
+		result := props.DeepCopy()
+		result.Type = "object"
+		result.OneOf = nil
+		for _, v := range oneOf {
+			if v.Ref == "" {
+				// this transform does not apply here
+				// return the original props
+				return props
+			}
+			name := v.Ref
+			name = name[strings.LastIndex(name, "/")+1:]
+			name = strcase.LowerCamelCase(name)
+			result.Properties[name] = *SchemaPropsToJSONProps(v, spec)
+		}
+		return result
 	}
 	return props
 }
