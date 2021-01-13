@@ -36,3 +36,5 @@ changelog:
       - '^ci:'
       - '^docs:'
       - '^test:'
+      - '^style:'
+      - '^refactor:'
