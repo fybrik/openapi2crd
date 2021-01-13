@@ -5,19 +5,58 @@ package config
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"path"
 	"path/filepath"
+	"strings"
 
 	yaml "gopkg.in/yaml.v2"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextensionsv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/kubernetes/scheme"
 )
+
+func GenerateCRDs(gvkItems []string) ([]*apiextensions.CustomResourceDefinition, error) {
+	crds := []*apiextensions.CustomResourceDefinition{}
+	for _, groupVersionKind := range gvkItems {
+		// Parse group version and kind
+		splitted := strings.SplitN(groupVersionKind, "/", 3)
+		group, version, kind := splitted[0], splitted[1], splitted[2]
+		if group == "" || version == "" || kind == "" {
+			return nil, fmt.Errorf("Invalid groupVersionKind %s", groupVersionKind)
+		}
+
+		plural := strings.ToLower(fmt.Sprintf("%ss", kind))
+		crds = append(crds, &apiextensions.CustomResourceDefinition{
+			ObjectMeta: v1.ObjectMeta{
+				Name: fmt.Sprintf("%s.%s", plural, group),
+			},
+			Spec: apiextensions.CustomResourceDefinitionSpec{
+				Group: group,
+				Scope: apiextensions.NamespaceScoped,
+				Names: apiextensions.CustomResourceDefinitionNames{
+					Kind:     kind,
+					Plural:   plural,
+					Singular: strings.ToLower(kind),
+				},
+				Versions: []apiextensions.CustomResourceDefinitionVersion{
+					{
+						Name:    version,
+						Served:  true,
+						Storage: true,
+					},
+				},
+			},
+		})
+	}
+	return crds, nil
+}
 
 // LoadCRDs loads all CustomResourceDefinition resources from a directory (glob)
 func LoadCRDs(dirpath string) ([]*apiextensions.CustomResourceDefinition, error) {
