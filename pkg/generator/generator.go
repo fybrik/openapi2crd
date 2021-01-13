@@ -38,6 +38,6 @@ func getCustomResourceValidation(name string, spec openapi3.Schemas) *apiextensi
 
 	schema := spec[name]
 	return &apiextensions.CustomResourceValidation{
-		OpenAPIV3Schema: convert.SchemaPropsToJSONProps(schema, spec),
+		OpenAPIV3Schema: convert.SchemaPropsToJSONProps(schema),
 	}
 }

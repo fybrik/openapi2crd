@@ -12,7 +12,7 @@ import (
 )
 
 // SchemaPropsToJSONProps converts openapi3.Schema to a JSONProps
-func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef, spec openapi3.Schemas) *apiextensions.JSONSchemaProps {
+func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef) *apiextensions.JSONSchemaProps {
 	var props *apiextensions.JSONSchemaProps
 
 	if schemaRef == nil {
@@ -44,29 +44,29 @@ func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef, spec openapi3.Schemas
 		MaxProperties:        castUInt64P(schemaProps.MaxProps),
 		MinProperties:        castUInt64(schemaProps.MinProps),
 		Required:             schemaProps.Required,
-		Items:                schemaToJSONSchemaPropsOrArray(schemaProps.Items, spec),
-		AllOf:                schemasToJSONSchemaPropsArray(schemaProps.AllOf, spec),
-		OneOf:                schemasToJSONSchemaPropsArray(schemaProps.OneOf, spec),
-		AnyOf:                schemasToJSONSchemaPropsArray(schemaProps.AnyOf, spec),
-		Not:                  SchemaPropsToJSONProps(schemaProps.Not, spec),
-		Properties:           schemasToJSONSchemaPropsMap(schemaProps.Properties, spec),
-		AdditionalProperties: schemaToJSONSchemaPropsOrBool(schemaProps.AdditionalProperties, spec),
-		// PatternProperties:    schemasToJSONSchemaPropsMap(schemaProps.PatternProperties, spec),
-		// AdditionalItems: schemaToJSONSchemaPropsOrBool(schemaProps.AdditionalItems, spec),
+		Items:                schemaToJSONSchemaPropsOrArray(schemaProps.Items),
+		AllOf:                schemasToJSONSchemaPropsArray(schemaProps.AllOf),
+		OneOf:                schemasToJSONSchemaPropsArray(schemaProps.OneOf),
+		AnyOf:                schemasToJSONSchemaPropsArray(schemaProps.AnyOf),
+		Not:                  SchemaPropsToJSONProps(schemaProps.Not),
+		Properties:           schemasToJSONSchemaPropsMap(schemaProps.Properties),
+		AdditionalProperties: schemaToJSONSchemaPropsOrBool(schemaProps.AdditionalProperties),
+		// PatternProperties:    schemasToJSONSchemaPropsMap(schemaProps.PatternProperties),
+		// AdditionalItems: schemaToJSONSchemaPropsOrBool(schemaProps.AdditionalItems),
 	}
 
 	// Apply custom transformations
-	props = transformations(props, schemaRef, spec)
+	props = transformations(props, schemaRef)
 
 	return props
 }
 
-func transformations(props *apiextensions.JSONSchemaProps, schemaRef *openapi3.SchemaRef, spec openapi3.Schemas) *apiextensions.JSONSchemaProps {
-	return oneOfRefsTransform(props, schemaRef.Value.OneOf, spec)
+func transformations(props *apiextensions.JSONSchemaProps, schemaRef *openapi3.SchemaRef) *apiextensions.JSONSchemaProps {
+	return oneOfRefsTransform(props, schemaRef.Value.OneOf)
 }
 
 // oneOfRefsTransform transforms oneOf with a list of $ref to a list of nullable properties
-func oneOfRefsTransform(props *apiextensions.JSONSchemaProps, oneOf openapi3.SchemaRefs, spec openapi3.Schemas) *apiextensions.JSONSchemaProps {
+func oneOfRefsTransform(props *apiextensions.JSONSchemaProps, oneOf openapi3.SchemaRefs) *apiextensions.JSONSchemaProps {
 	if props.OneOf != nil && len(props.Properties) == 0 && props.AdditionalProperties == nil {
 		result := props.DeepCopy()
 		result.Type = "object"
@@ -80,17 +80,17 @@ func oneOfRefsTransform(props *apiextensions.JSONSchemaProps, oneOf openapi3.Sch
 			name := v.Ref
 			name = name[strings.LastIndex(name, "/")+1:]
 			name = strcase.LowerCamelCase(name)
-			result.Properties[name] = *SchemaPropsToJSONProps(v, spec)
+			result.Properties[name] = *SchemaPropsToJSONProps(v)
 		}
 		return result
 	}
 	return props
 }
 
-func schemasToJSONSchemaPropsArray(schemas openapi3.SchemaRefs, spec openapi3.Schemas) []apiextensions.JSONSchemaProps {
+func schemasToJSONSchemaPropsArray(schemas openapi3.SchemaRefs) []apiextensions.JSONSchemaProps {
 	var s []apiextensions.JSONSchemaProps
 	for _, schema := range schemas {
-		s = append(s, *SchemaPropsToJSONProps(schema, spec))
+		s = append(s, *SchemaPropsToJSONProps(schema))
 	}
 	return s
 }
@@ -104,30 +104,30 @@ func enumJSON(enum []interface{}) []apiextensions.JSON {
 	return s
 }
 
-func schemaToJSONSchemaPropsOrArray(schema *openapi3.SchemaRef, spec openapi3.Schemas) *apiextensions.JSONSchemaPropsOrArray {
+func schemaToJSONSchemaPropsOrArray(schema *openapi3.SchemaRef) *apiextensions.JSONSchemaPropsOrArray {
 	if schema == nil {
 		return nil
 	}
 	return &apiextensions.JSONSchemaPropsOrArray{
-		Schema: SchemaPropsToJSONProps(schema, spec),
+		Schema: SchemaPropsToJSONProps(schema),
 	}
 }
 
-func schemaToJSONSchemaPropsOrBool(schema *openapi3.SchemaRef, spec openapi3.Schemas) *apiextensions.JSONSchemaPropsOrBool {
+func schemaToJSONSchemaPropsOrBool(schema *openapi3.SchemaRef) *apiextensions.JSONSchemaPropsOrBool {
 	if schema == nil {
 		return nil
 	}
 
 	return &apiextensions.JSONSchemaPropsOrBool{
-		Schema: SchemaPropsToJSONProps(schema, spec),
+		Schema: SchemaPropsToJSONProps(schema),
 		Allows: true, // TODO: *schema.Value.AdditionalPropertiesAllowed
 	}
 }
 
-func schemasToJSONSchemaPropsMap(schemaMap openapi3.Schemas, spec openapi3.Schemas) map[string]apiextensions.JSONSchemaProps {
+func schemasToJSONSchemaPropsMap(schemaMap openapi3.Schemas) map[string]apiextensions.JSONSchemaProps {
 	m := make(map[string]apiextensions.JSONSchemaProps)
 	for key, schema := range schemaMap {
-		m[key] = *SchemaPropsToJSONProps(schema, spec)
+		m[key] = *SchemaPropsToJSONProps(schema)
 	}
 	return m
 }
