@@ -71,6 +71,8 @@ func oneOfRefsTransform(props *apiextensions.JSONSchemaProps, oneOf openapi3.Sch
 		result := props.DeepCopy()
 		result.Type = "object"
 		result.OneOf = nil
+
+		options := []apiextensions.JSON{}
 		for _, v := range oneOf {
 			if v.Ref == "" {
 				// this transform does not apply here
@@ -80,8 +82,16 @@ func oneOfRefsTransform(props *apiextensions.JSONSchemaProps, oneOf openapi3.Sch
 			name := v.Ref
 			name = name[strings.LastIndex(name, "/")+1:]
 			name = strcase.LowerCamelCase(name)
+			options = append(options, name)
 			result.Properties[name] = *SchemaPropsToJSONProps(v)
 		}
+
+		result.Properties["type"] = apiextensions.JSONSchemaProps{
+			Type:        "string",
+			Enum:        options,
+			Description: "Type is the discriminator for the different possible values",
+		}
+
 		return result
 	}
 	return props
