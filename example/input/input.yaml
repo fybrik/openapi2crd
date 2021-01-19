@@ -7,6 +7,7 @@ spec:
   group: project.io
   names:
     kind: Example
+    listKind: ExampleList
     plural: examples
     singular: example
   scope: Namespaced

@@ -5,16 +5,15 @@ package exporter
 
 import (
 	"bufio"
-	"encoding/json"
 	"os"
 	"path/filepath"
 
-	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
 	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/yaml"
 )
 
 // Exporter exports the yaml config to file.
@@ -60,13 +59,11 @@ func (e Exporter) marshallCrd(crd *apiextensions.CustomResourceDefinition) error
 	obj.Kind = "CustomResourceDefinition"
 	obj.APIVersion = "apiextensions.k8s.io/v1"
 
-	// TODO: this marshals the status field although it's empty
-	jsonBytes, err := json.MarshalIndent(obj, "", "    ")
-	if err != nil {
-		return err
-	}
+	// TODO: yaml.Marshal creates an empty status field that we should remove
+	// This is a workaround to avoid https://github.com/mesh-for-data/openapi2crd/issues/1
+	obj.Status.StoredVersions = []string{}
 
-	yamlBytes, err := yaml.JSONToYAML(jsonBytes)
+	yamlBytes, err := yaml.Marshal(obj)
 	if err != nil {
 		return err
 	}

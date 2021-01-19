@@ -42,6 +42,7 @@ func GenerateCRDs(gvkItems []string) ([]*apiextensions.CustomResourceDefinition,
 				Scope: apiextensions.NamespaceScoped,
 				Names: apiextensions.CustomResourceDefinitionNames{
 					Kind:     kind,
+					ListKind: fmt.Sprintf("%sList", kind),
 					Plural:   plural,
 					Singular: strings.ToLower(kind),
 				},
