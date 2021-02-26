@@ -3,7 +3,7 @@ module github.com/mesh-for-data/openapi2crd
 go 1.13
 
 require (
-	github.com/getkin/kin-openapi v0.43.0
+	github.com/getkin/kin-openapi v0.44.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.1
