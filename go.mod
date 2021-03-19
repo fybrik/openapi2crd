@@ -10,7 +10,7 @@ require (
 	github.com/stoewer/go-strcase v1.2.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apiextensions-apiserver v0.20.4
-	k8s.io/apimachinery v0.20.4
+	k8s.io/apimachinery v0.20.5
 	k8s.io/client-go v0.20.4
 	sigs.k8s.io/yaml v1.2.0
 )
