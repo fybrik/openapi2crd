@@ -62,7 +62,20 @@ func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef) *apiextensions.JSONSc
 }
 
 func transformations(props *apiextensions.JSONSchemaProps, schemaRef *openapi3.SchemaRef) *apiextensions.JSONSchemaProps {
-	return oneOfRefsTransform(props, schemaRef.Value.OneOf)
+	result := props
+	result = oneOfRefsTransform(result, schemaRef.Value.OneOf)
+	result = removeUnknownFormats(result)
+	return result
+}
+
+func removeUnknownFormats(props *apiextensions.JSONSchemaProps) *apiextensions.JSONSchemaProps {
+	switch props.Format {
+	case "int32", "int64", "float", "double", "byte", "date", "date-time", "password":
+		// Valid formats https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#format
+	default:
+		props.Format = ""
+	}
+	return props
 }
 
 // oneOfRefsTransform transforms oneOf with a list of $ref to a list of nullable properties
