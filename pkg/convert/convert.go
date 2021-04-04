@@ -63,9 +63,17 @@ func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef) *apiextensions.JSONSc
 
 func transformations(props *apiextensions.JSONSchemaProps, schemaRef *openapi3.SchemaRef) *apiextensions.JSONSchemaProps {
 	result := props
-	result = oneOfRefsTransform(result, schemaRef.Value.OneOf)
+	result = handleAdditionalProperties(result, schemaRef.Value.AdditionalPropertiesAllowed)
 	result = removeUnknownFormats(result)
+	result = oneOfRefsTransform(result, schemaRef.Value.OneOf)
 	return result
+}
+
+func handleAdditionalProperties(props *apiextensions.JSONSchemaProps, additionalPropertiesAllowed *bool) *apiextensions.JSONSchemaProps {
+	if additionalPropertiesAllowed != nil && *additionalPropertiesAllowed {
+		props.XPreserveUnknownFields = additionalPropertiesAllowed
+	}
+	return props
 }
 
 func removeUnknownFormats(props *apiextensions.JSONSchemaProps) *apiextensions.JSONSchemaProps {
@@ -143,7 +151,7 @@ func schemaToJSONSchemaPropsOrBool(schema *openapi3.SchemaRef) *apiextensions.JS
 
 	return &apiextensions.JSONSchemaPropsOrBool{
 		Schema: SchemaPropsToJSONProps(schema),
-		Allows: true, // TODO: *schema.Value.AdditionalPropertiesAllowed
+		Allows: true,
 	}
 }
 
