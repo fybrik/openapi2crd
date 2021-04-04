@@ -38,7 +38,7 @@ func SchemaPropsToJSONProps(schemaRef *openapi3.SchemaRef) *apiextensions.JSONSc
 		Pattern:              schemaProps.Pattern,
 		MaxItems:             castUInt64P(schemaProps.MaxItems),
 		MinItems:             castUInt64(schemaProps.MinItems),
-		UniqueItems:          schemaProps.UniqueItems, // TODO: The field uniqueItems cannot be set to true.
+		UniqueItems:          false, // The field uniqueItems cannot be set to true.
 		MultipleOf:           schemaProps.MultipleOf,
 		Enum:                 enumJSON(schemaProps.Enum),
 		MaxProperties:        castUInt64P(schemaProps.MaxProps),
