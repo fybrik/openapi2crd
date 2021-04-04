@@ -1,6 +1,6 @@
 module github.com/mesh-for-data/openapi2crd
 
-go 1.13
+go 1.16
 
 require (
 	github.com/getkin/kin-openapi v0.53.0
