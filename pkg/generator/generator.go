@@ -17,13 +17,17 @@ func New() *Generator {
 	return &Generator{}
 }
 
-func (g *Generator) Generate(original *apiextensions.CustomResourceDefinition, spec openapi3.Schemas) *apiextensions.CustomResourceDefinition {
-	original.Spec.Validation = getCustomResourceValidation(original.Spec.Names.Kind, spec)
-	return original
+func (g *Generator) Generate(original *apiextensions.CustomResourceDefinition, spec openapi3.Schemas) (*apiextensions.CustomResourceDefinition, error) {
+	validation, err := getCustomResourceValidation(original.Spec.Names.Kind, spec)
+	if err != nil {
+		return nil, err
+	}
+	original.Spec.Validation = validation
+	return original, nil
 }
 
 // getCustomResourceValidation returns the validation definition for a CRD name
-func getCustomResourceValidation(name string, spec openapi3.Schemas) *apiextensions.CustomResourceValidation {
+func getCustomResourceValidation(name string, spec openapi3.Schemas) (*apiextensions.CustomResourceValidation, error) {
 	// Fix known types (ref: https://github.com/kubernetes/kubernetes/issues/62329)
 	spec["k8s.io/apimachinery/pkg/util/intstr.IntOrString"] = openapi3.NewSchemaRef("", &openapi3.Schema{
 		AnyOf: openapi3.SchemaRefs{
@@ -37,7 +41,12 @@ func getCustomResourceValidation(name string, spec openapi3.Schemas) *apiextensi
 	})
 
 	schema := spec[name]
-	return &apiextensions.CustomResourceValidation{
-		OpenAPIV3Schema: convert.SchemaPropsToJSONProps(schema),
+	props := convert.SchemaPropsToJSONProps(schema)
+	if err := convert.Validate(props); err != nil {
+		return nil, err
 	}
+
+	return &apiextensions.CustomResourceValidation{
+		OpenAPIV3Schema: props,
+	}, nil
 }

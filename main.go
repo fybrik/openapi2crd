@@ -67,7 +67,7 @@ func RootCmd() *cobra.Command {
 				if resourcesOptionValue != "" {
 					message = fmt.Sprintf("Does directory %s include a YAML with CustomResourceDefinition?", resourcesOptionValue)
 				}
-				return fmt.Errorf("Nothing to process. %s", message)
+				return fmt.Errorf("nothing to process. %s", message)
 			}
 
 			outputOptionValue := viper.GetString(outputOption)
@@ -78,8 +78,11 @@ func RootCmd() *cobra.Command {
 
 			generator := generator.New()
 			for _, crd := range crds {
-				modified := generator.Generate(crd, swagger.Components.Schemas)
-				err := exporter.Export(modified)
+				modified, err := generator.Generate(crd, swagger.Components.Schemas)
+				if err != nil {
+					return err
+				}
+				err = exporter.Export(modified)
 				if err != nil {
 					return err
 				}
