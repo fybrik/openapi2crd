@@ -29,7 +29,7 @@ func GenerateCRDs(gvkItems []string) ([]*apiextensions.CustomResourceDefinition,
 		splitted := strings.SplitN(groupVersionKind, "/", 3)
 		group, version, kind := splitted[0], splitted[1], splitted[2]
 		if group == "" || version == "" || kind == "" {
-			return nil, fmt.Errorf("Invalid groupVersionKind %s", groupVersionKind)
+			return nil, fmt.Errorf("invalid groupVersionKind %s", groupVersionKind)
 		}
 
 		plural := strings.ToLower(fmt.Sprintf("%ss", kind))
