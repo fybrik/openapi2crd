@@ -17,13 +17,27 @@ func New() *Generator {
 	return &Generator{}
 }
 
-func (g *Generator) Generate(original *apiextensions.CustomResourceDefinition, spec openapi3.Schemas) (*apiextensions.CustomResourceDefinition, error) {
-	validation, err := getCustomResourceValidation(original.Spec.Names.Kind, spec)
+func (g *Generator) Generate(crd *apiextensions.CustomResourceDefinition, spec openapi3.Schemas) (*apiextensions.CustomResourceDefinition, error) {
+	validation, err := getCustomResourceValidation(crd.Spec.Names.Kind, spec)
 	if err != nil {
 		return nil, err
 	}
-	original.Spec.Validation = validation
-	return original, nil
+	crd.Spec.Validation = validation
+
+	// A workaround because ValidateCRD requires at least one stored version in the status.
+	// Otherwise the following error is raised:
+	// status.storedVersions: Invalid value: []string{}: must have at least one stored version
+	crd.Status.StoredVersions = []string{crd.Spec.Version}
+
+	if err := ValidateCRD(crd); err != nil {
+		return nil, err
+	}
+	// TODO: yaml.Marshal creates an empty status field that we should remove
+	// StoredVersions is set to empty array instead of nil to bypass the following issue:
+	// https://github.com/mesh-for-data/openapi2crd/issues/1
+	crd.Status.StoredVersions = []string{}
+
+	return crd, nil
 }
 
 // getCustomResourceValidation returns the validation definition for a CRD name
@@ -42,9 +56,6 @@ func getCustomResourceValidation(name string, spec openapi3.Schemas) (*apiextens
 
 	schema := spec[name]
 	props := convert.SchemaPropsToJSONProps(schema)
-	if err := convert.Validate(props); err != nil {
-		return nil, err
-	}
 
 	return &apiextensions.CustomResourceValidation{
 		OpenAPIV3Schema: props,
