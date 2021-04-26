@@ -59,10 +59,6 @@ func (e Exporter) marshallCrd(crd *apiextensions.CustomResourceDefinition) error
 	obj.Kind = "CustomResourceDefinition"
 	obj.APIVersion = "apiextensions.k8s.io/v1"
 
-	// TODO: yaml.Marshal creates an empty status field that we should remove
-	// This is a workaround to avoid https://github.com/mesh-for-data/openapi2crd/issues/1
-	obj.Status.StoredVersions = []string{}
-
 	yamlBytes, err := yaml.Marshal(obj)
 	if err != nil {
 		return err
