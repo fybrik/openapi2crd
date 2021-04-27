@@ -37,7 +37,7 @@ func RootCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			specOptionValue := args[0]
 
-			swagger, err := config.LoadSwagger(specOptionValue)
+			openapiSpec, err := config.LoadOpenAPI(specOptionValue)
 			if err != nil {
 				return err
 			}
@@ -78,7 +78,7 @@ func RootCmd() *cobra.Command {
 
 			generator := generator.New()
 			for _, crd := range crds {
-				modified, err := generator.Generate(crd, swagger.Components.Schemas)
+				modified, err := generator.Generate(crd, openapiSpec.Components.Schemas)
 				if err != nil {
 					return err
 				}
