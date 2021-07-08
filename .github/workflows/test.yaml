@@ -23,3 +23,11 @@ jobs:
           go mod tidy
           git checkout go.sum
           git diff --exit-code
+      - name: Run on example (gkv)
+        run: |
+          go run main.go example/spec.yaml -g project.io/v1alpha1/Example -o example/output/output.yaml
+      - name: Check that there are no source code changes
+        run: |
+          go mod tidy
+          git checkout go.sum
+          git diff --exit-code

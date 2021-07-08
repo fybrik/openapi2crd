@@ -27,7 +27,11 @@ func (g *Generator) Generate(crd *apiextensions.CustomResourceDefinition, spec o
 	// A workaround because ValidateCRD requires at least one stored version in the status.
 	// Otherwise the following error is raised:
 	// status.storedVersions: Invalid value: []string{}: must have at least one stored version
-	crd.Status.StoredVersions = []string{crd.Spec.Version}
+	for _, version := range crd.Spec.Versions {
+		if version.Storage {
+			crd.Status.StoredVersions = append(crd.Status.StoredVersions, version.Name)
+		}
+	}
 
 	if err := ValidateCRD(crd); err != nil {
 		return nil, err
