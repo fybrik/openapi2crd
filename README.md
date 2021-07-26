@@ -1,22 +1,22 @@
 # openapi2crd
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/mesh-for-data/openapi2crd)](https://goreportcard.com/report/github.com/mesh-for-data/openapi2crd)
-[![Go Reference](https://pkg.go.dev/badge/github.com/mesh-for-data/openapi2crd.svg)](https://pkg.go.dev/github.com/mesh-for-data/openapi2crd)
-[![golangci-lint](https://github.com/mesh-for-data/openapi2crd/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/mesh-for-data/openapi2crd/actions/workflows/golangci-lint.yml)
-[![CodeQL](https://github.com/mesh-for-data/openapi2crd/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mesh-for-data/openapi2crd/actions/workflows/codeql-analysis.yml)
-[![gosec](https://github.com/mesh-for-data/openapi2crd/actions/workflows/golang-security.yml/badge.svg)](https://github.com/mesh-for-data/openapi2crd/actions/workflows/golang-security.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/fybrik/openapi2crd)](https://goreportcard.com/report/github.com/fybrik/openapi2crd)
+[![Go Reference](https://pkg.go.dev/badge/github.com/fybrik/openapi2crd.svg)](https://pkg.go.dev/github.com/fybrik/openapi2crd)
+[![golangci-lint](https://github.com/fybrik/openapi2crd/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/fybrik/openapi2crd/actions/workflows/golangci-lint.yml)
+[![CodeQL](https://github.com/fybrik/openapi2crd/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/fybrik/openapi2crd/actions/workflows/codeql-analysis.yml)
+[![gosec](https://github.com/fybrik/openapi2crd/actions/workflows/golang-security.yml/badge.svg)](https://github.com/fybrik/openapi2crd/actions/workflows/golang-security.yml)
 
 
 `openapi2crd` is a CLI to generate Kubernetes Custom Resource Definition (CRD) resources from [OpenAPI 3.0](https://www.openapis.org/).
 
 ## Install
 
-Download the appropriate version for your platform from [Releases](https://github.com/mesh-for-data/openapi2crd/releases/latest). You may want to install the binary to somewhere in your system's PATH such as `/usr/local/bin`.
+Download the appropriate version for your platform from [Releases](https://github.com/fybrik/openapi2crd/releases/latest). You may want to install the binary to somewhere in your system's PATH such as `/usr/local/bin`.
 
 Alternatively, if you have go 1.16 or later then you can also use `go install`. This will put `openapi2crd` in `$(go env GOPATH)/bin`:
 
 ```bash
-go install github.com/mesh-for-data/openapi2crd@latest
+go install fybrik.io/openapi2crd@latest
 ```
 
 ## Usage
