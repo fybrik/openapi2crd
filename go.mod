@@ -1,4 +1,4 @@
-module github.com/mesh-for-data/openapi2crd
+module fybrik.io/openapi2crd
 
 go 1.16
 

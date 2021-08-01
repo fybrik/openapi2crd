@@ -7,7 +7,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 
-	"github.com/mesh-for-data/openapi2crd/pkg/convert"
+	"fybrik.io/openapi2crd/pkg/convert"
 )
 
 type Generator struct {
@@ -38,7 +38,7 @@ func (g *Generator) Generate(crd *apiextensions.CustomResourceDefinition, spec o
 	}
 	// TODO: yaml.Marshal creates an empty status field that we should remove
 	// StoredVersions is set to empty array instead of nil to bypass the following issue:
-	// https://github.com/mesh-for-data/openapi2crd/issues/1
+	// https://github.com/fybrik/openapi2crd/issues/1
 	crd.Status.StoredVersions = []string{}
 
 	return crd, nil

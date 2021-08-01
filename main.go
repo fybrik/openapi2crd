@@ -12,9 +12,9 @@ import (
 	"github.com/spf13/viper"
 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions"
 
-	"github.com/mesh-for-data/openapi2crd/pkg/config"
-	"github.com/mesh-for-data/openapi2crd/pkg/exporter"
-	"github.com/mesh-for-data/openapi2crd/pkg/generator"
+	"fybrik.io/openapi2crd/pkg/config"
+	"fybrik.io/openapi2crd/pkg/exporter"
+	"fybrik.io/openapi2crd/pkg/generator"
 )
 
 const (
