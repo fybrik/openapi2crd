@@ -38,3 +38,4 @@ changelog:
       - '^test:'
       - '^style:'
       - '^refactor:'
+      - '^build(deps):'
