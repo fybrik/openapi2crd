@@ -34,7 +34,7 @@ jobs:
         with:
           github-token: ${{ secrets.TAG_PSAT }}
           script: |
-            github.git.createRef({
+            github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: "refs/tags/${{ github.event.inputs.version }}",
