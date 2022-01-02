@@ -1,3 +1,6 @@
+> :exclamation: This project is no longer maintained
+
+
 # openapi2crd
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/fybrik/openapi2crd)](https://goreportcard.com/report/github.com/fybrik/openapi2crd)
